@@ -7,11 +7,11 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="合成大奶娃">
-<meta name="description" content="合成大奶娃 · 纯前端小游戏：拖动瞄准、松手投放，相同的撞在一起合成更大的一只。">
+<meta name="apple-mobile-web-app-title" content="合成真正的蔡鸡鸡">
+<meta name="description" content="合成真正的蔡鸡鸡 · 纯前端小游戏：拖动瞄准、松手投放，相同的撞在一起合成更大的一只。">
 <!-- ↓ Monetag 站点验证：把后台给的 meta 标签粘在下面这一行 ↓ -->
 
-<title>合成大奶娃</title>
+<title>合成真正的蔡鸡鸡</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -20,7 +20,8 @@
 
   <!-- ===== 游戏区 ===== -->
   <section class="stage" id="stage">
-    <canvas id="game" aria-label="合成大奶娃游戏区域"></canvas>
+    <canvas id="game" aria-label="合成真正的蔡鸡鸡游戏区域"></canvas>
+    <div id="assetStatus" class="asset-status" role="status">正在准备人物素材…</div>
 
     <!-- 复活币：浮在棋盘左上角。
          刻意不放进顶部信息条 —— 手机上面板是横向 flex，
@@ -38,7 +39,7 @@
           <div class="dialog-emoji">😵</div>
           <h2>还能再救一下</h2>
           <p class="dialog-score">本局得分 <strong id="reviveScore">0</strong></p>
-          <p class="revive-hint">清掉警戒线以上的水果，接着玩</p>
+          <p class="revive-hint">清掉警戒线以上的人物，接着玩</p>
           <div class="dialog-actions">
             <button class="btn" id="giveUpBtn" type="button">不了，结束吧</button>
             <button class="btn btn-revive" id="reviveBtn" type="button">🪙 用一枚复活币</button>
@@ -64,7 +65,6 @@
           <div class="dialog-actions">
             <button class="btn" id="boardBtn2" type="button">🏆 排行榜</button>
             <button class="btn btn-primary" id="restartBtn" type="button">再来一局</button>
-            <button class="btn btn-sponsor btn-wide" id="sponsorBtn" type="button">🌶️ 可以赏作者一包辣条嘛</button>
           </div>
           <p class="dialog-hint">按 R 键也可重新开始</p>
         </div>
@@ -77,8 +77,8 @@
   <aside class="panel">
 
     <header class="panel-head">
-      <h1>合成大奶娃</h1>
-      <p class="subtitle">相同的撞在一起，越合越大</p>
+      <h1>合成真正的蔡鸡鸡</h1>
+      <p class="subtitle">人物版 · 11 级进化，合出终极合照</p>
     </header>
 
     <div class="stats">
@@ -100,7 +100,7 @@
     <div class="chain-box">
       <span class="box-label">合成表</span>
       <canvas id="chain" width="680" height="112" aria-label="合成顺序"></canvas>
-      <p class="chain-note">✨ 两个神奶蛙撞在一起会一起炸掉，换 <strong>500 分</strong> + <strong>一枚复活币</strong></p>
+      <p class="chain-note">✨ 两张终极合照相撞，获得 <strong>500 分</strong> + <strong>一枚复活币</strong><br>⑨ 金色光环 · ⑩ 蓝紫电光 · ⑪ 彩色终极</p>
     </div>
 
     <div class="actions">
@@ -119,6 +119,7 @@
       鼠标：移动瞄准、点击投放；触屏：拖动瞄准、松手投放。<br>
       ← → 微调位置，空格投放，R 重开。<br>
       每 <strong>2000 分</strong>攒一枚<strong>复活币</strong>，只在本局有效。
+      <br><a href="https://github.com/yhsome/BigNaiWa" target="_blank" rel="noopener">原作：YHSome / BigNaiWa</a>
     </p>
 
   </aside>
@@ -129,7 +130,7 @@
 <div class="modal" id="boardModal" aria-hidden="true" role="dialog" aria-label="排行榜">
   <div class="modal-card">
     <header class="modal-head">
-      <h2>🏆 最近高手榜</h2>
+      <h2>🏆 本机高手榜</h2>
       <button class="icon-btn" id="boardClose" type="button" aria-label="关闭">✕</button>
     </header>
     <div class="nick-row">
@@ -139,41 +140,18 @@
     </div>
     <div class="board-list" id="boardList"></div>
     <footer class="modal-foot">
-      <span class="board-note">只取最近 20 次提交，成绩会被后来的人挤下去</span>
+      <span class="board-note">最近 20 局 · 仅保存在此浏览器</span>
       <button class="btn" id="boardRefresh" type="button">刷新</button>
     </footer>
   </div>
 </div>
 
-<!-- ===== 赞助作者弹窗 ===== -->
-<div class="modal" id="sponsorModal" aria-hidden="true" role="dialog" aria-label="赞助作者">
-  <div class="modal-card">
-    <header class="modal-head">
-      <h2>🌶️ 请作者吃包辣条</h2>
-      <button class="icon-btn" id="sponsorClose" type="button" aria-label="关闭">✕</button>
-    </header>
-    <div class="sponsor-body">
-      <p class="sponsor-note">这游戏完全免费，也没有任何广告。<br>
-        要是它逗你笑了一下，赏作者一包辣条呗 🌶️</p>
-      <img class="sponsor-qr" src="assets/sponsor-qr.jpg" width="480" height="480"
-           alt="微信收款码" loading="lazy" decoding="async">
-      <p class="sponsor-hint">微信扫一扫 · 一包辣条 · 全凭心意</p>
-    </div>
-    <footer class="modal-foot">
-      <span class="board-note">谢谢每一位投喂的玩家 ❤️</span>
-      <button class="btn" id="sponsorOk" type="button">关闭</button>
-    </footer>
-  </div>
-</div>
-
-<!-- 碰撞形状数据（按贴图轮廓自动生成，由 tools/build_parts.py 产出） -->
+<!-- 用户原始透明合图，以及对应的显示区域和碰撞数据 -->
 <script src="assets/fruits/parts.js"></script>
-<!-- 极模糊占位图（内联 data URL，由 tools/make_blur.py 产出）：贴图没到位时先画它 -->
-<script src="assets/fruits/blur.js"></script>
+<script src="atlas-data.js"></script>
+<script src="portraits.js"></script>
+<script src="portrait-effects.js"></script>
 <script src="game.js"></script>
-<!-- 排行榜 -->
-<script src="leaderboard.min.js"></script>
-<!-- 赞助作者 -->
-<script src="sponsor.js"></script>
+<script src="leaderboard-local.js"></script>
 </body>
 </html>

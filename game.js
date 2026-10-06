@@ -82,8 +82,11 @@
   const SPAWN_TIERS = [0, 1, 2, 3, 4];
   const SPAWN_WEIGHTS = [0.28, 0.24, 0.20, 0.16, 0.12];
 
-  const BEST_KEY = 'danaiwa.best.v1';
+  const BEST_KEY = 'danaiwa.portraits.best.v1';
   const MUTE_KEY = 'danaiwa.mute.v1';
+
+  if (window.Portraits) FRUITS.forEach((f, i) => { f.name = window.Portraits.regions[i].name; });
+  let portraitsReady = !window.Portraits;
 
   /* ---------------------------------------------------------
    *  DOM
@@ -537,7 +540,7 @@
         haptic(70);
         state.flash = 1.4;                    // 比普通合成更亮的全屏闪
         state.freeze = FREEZE_MS / 1000;      // 定格一下，让这一下有重量
-        state.floats.push({ x: mx, y: my - 74, text: '两个神奶蛙 💥', life: 1.6 });
+        state.floats.push({ x: mx, y: my - 74, text: '终极合照 💥', life: 1.6 });
         state.floats.push({ x: mx, y: my - 16, text: '+' + MAX_BONUS, life: 2.2, big: true });
         if (MAX_MERGE_GIVES_REVIVE) {
           state.revives++;
@@ -663,6 +666,7 @@
   }
 
   function tryDrop() {
+    if (!portraitsReady) return;
     if (state.over || !state.ready) return;
     const tier = state.pending;
     const [lo, hi] = aimLimit(tier);
@@ -818,6 +822,8 @@
     }
     if (s !== 1) c.scale(s, s);
     c.rotate(angle || 0);
+
+    if (window.PortraitFX) window.PortraitFX.draw(c, r, tier);
 
     /* —— 贴图模式：主体直接画 PNG，画布边长按 ASSET_FILL 换算，保证视觉大小 = 物理直径 —— */
     if (f.img) {
@@ -989,7 +995,8 @@
       if (b.popAt) {
         const t = (now - b.popAt) / 220;
         if (t < 1) scale = 1 + 0.28 * (1 - t);
-        else b.popAt = 0;
+        if (window.PortraitFX && t < 3) window.PortraitFX.burst(ctx, b.x, b.y, b.r, b.tier, t / 3);
+        if (t >= 3) b.popAt = 0;
       }
       const shape = b.sq > 0.004 ? { a: b.sqA, k: b.sq } : null;
       drawFruit(ctx, b.x, b.y, b.r, b.tier, b.angle, scale, shape);
@@ -1312,6 +1319,20 @@
   }
 
   function loadSprites() {
+    if (window.Portraits) {
+      window.Portraits.ready.then(images => {
+        images.forEach((img, i) => { FRUITS[i].img = img; });
+        portraitsReady = true;
+        const loading = document.getElementById('assetStatus');
+        if (loading) loading.hidden = true;
+        refreshPreviews();
+      }).catch(error => {
+        const loading = document.getElementById('assetStatus');
+        if (loading) loading.textContent = error.message;
+        console.error(error);
+      });
+      return;
+    }
     let left = 0;
 
     function fetchOne(f, attempt) {

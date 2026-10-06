@@ -190,7 +190,7 @@ const bigFloat = G.state.floats.filter((f) => f.big);
 eq(bigFloat.length, 1, '有且只有一个大字飘分（不会和普通飘字重复）');
 eq(bigFloat[0].text, '+500', '大字写的是 +500');
 eq(G.state.floats.length, 2, '一共就两行飘字：大字 +500、小字说明');
-ok(G.state.floats.some((f) => f.text.indexOf('两个神奶蛙') >= 0), '还有一行「两个神奶蛙」说明文字');
+ok(G.state.floats.some((f) => f.text.indexOf('终极合照') >= 0), '还有一行「终极合照」说明文字');
 eq(G.state.revives, 1, '额外送了一枚复活币');
 eq(els.reviveBadge.hidden, false, '徽章就此出现');
 

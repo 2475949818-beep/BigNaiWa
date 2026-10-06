@@ -25,6 +25,10 @@
 
 * { box-sizing: border-box; }
 
+.asset-status { position:absolute; inset:0; display:grid; place-items:center; padding:24px; text-align:center; background:#fff3e0ee; z-index:5; font-weight:600; }
+.tips a { color:inherit; }
+.local-row { display:flex; justify-content:space-between; gap:12px; padding:12px; border-bottom:1px solid #ead9c9; }
+
 /* hidden 属性必须真的隐藏。
    浏览器默认只给 [hidden] { display: none }（权重 0,1,0），
    一旦某个类也写了 display（比如 .revive-chip { display: inline-flex }），
